@@ -6,24 +6,32 @@ import Nat32 "mo:base/Nat32";
 
 actor Votes{
 
-   // Definimos un type para generar un ID 
-  public type stockId = Nat32;
+   // Define a type to generate an ID, this ID will work as an index of a database.
+  public type ProductId = Nat32;
 
-  public type stockObject = {
+  //  Creating a type of a Product
+  public type ProductObject = {
     title : Text;
     votes : Nat;
   };
 
-  private stable var _next : stockId = 0;
+  // stable variables for data persistence
+  //
+  private stable var _nextProduct : ProductId = 0;
 
-  private stable var _stockObject : Trie.Trie<stockId, stockObject> = Trie.empty();
+  private stable var _ProductObject : Trie.Trie<ProductId, ProductObject> = Trie.empty();
 
   // Create a product.
-  public func create(_product : stockObject) : async stockId {
-    let stockId = _next;
-    _next += 1;
-    _stockObject := Trie.replace(
-      _stockObject,
+  // when a new product is created the function will return an ProductID
+  // The process is as follows: 
+  //    - a let assigns the current state of _nextProduct, at startup this let is equivalent to 0. 
+  //    - once the value is assigned, the _nextProduct variable has a value of 1 added to it to create an ID for the next product to be created.
+  //    - 
+  public func create(_product : ProductObject) : async ProductId {
+    let stockId = _nextProduct;
+    _nextProduct += 1;
+    _ProductObject := Trie.replace(
+      _ProductObject,
       key(stockId),
       Nat32.equal,
       ?_product,
@@ -32,13 +40,14 @@ actor Votes{
   };
 
   // Read a product.
-  public query func read(stockId : stockId) : async ?stockObject {
-    let result = Trie.find(_stockObject, key(stockId), Nat32.equal);
+  // the next function can read the records stored in Trie, comparing and finding if the specified ID exists, otherwise it will return a null value.
+  public query func read(stockId : ProductId) : async ?ProductObject {
+    let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
     return result;
   };
 
   // Create a trie key from a product identifier.
-  private func key(x : stockId) : Trie.Key<stockId> {
+  private func key(x : ProductId) : Trie.Key<ProductId> {
     return { hash = x; key = x };
   };
 
