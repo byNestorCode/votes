@@ -2,6 +2,7 @@ import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 import Trie "mo:base/Trie";
 import Nat32 "mo:base/Nat32";
+import Option "mo:base/Option";
 
 
 actor Votes{
@@ -44,6 +45,21 @@ actor Votes{
   public query func read(stockId : ProductId) : async ?ProductObject {
     let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
     return result;
+  };
+
+   // Update a superhero.
+  public func update(stockId : ProductId, _product : ProductObject) : async Bool {
+    let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
+    let exists = Option.isSome(result);
+    if (exists) {
+      _ProductObject := Trie.replace(
+        _ProductObject,
+        key(stockId),
+        Nat32.equal,
+        ?_product,
+      ).0;
+    };
+    return exists;
   };
 
   // Create a trie key from a product identifier.
