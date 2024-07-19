@@ -94,40 +94,4 @@ actor Votes{
     };
     return exists;
   };
-
-  /* // funcion para votos
-  public func vote(superheroId: Nat) : async () {
-  let index = findIndexById(superheroId);
-  if (index >= 0) {
-    let superhero = superheroes[index];
-    let updatedSuperhero = { superhero with votes = superhero.votes + 1 };
-    superheroes := updateAtIndex(superheroes, index, updatedSuperhero);
-  } else {
-    // Manejar el caso donde no se encuentra el superhéroe
-    // (esto puede depender de la lógica específica de tu aplicación)
-  };
-};
-
-public func getVotes(superheroId: Nat) : async Nat {
-  let index = findIndexById(superheroId);
-  if (index >= 0) {
-    return superheroes[index].votes;
-  } else {
-    // Manejar el caso donde no se encuentra el superhéroe
-    // (esto puede depender de la lógica específica de tu aplicación)
-    return 0;
-  };
-};
-
-// Suponiendo que superheroes es una lista de Superhero
-func findIndexById(id: Nat) : Int {
-  let len = Array.length(superheroes);
-  var index = -1;
-  for (i in 0 .. len - 1) {
-    if (superheroes[i].id == id) {
-      index = i;
-      break;
-    };
-  };
-  return index; */
 };
