@@ -3,6 +3,7 @@ import Text "mo:base/Text";
 import Trie "mo:base/Trie";
 import Nat32 "mo:base/Nat32";
 import Option "mo:base/Option";
+import Result "mo:base/Result";
 
 
 actor Votes{
@@ -23,21 +24,26 @@ actor Votes{
   private stable var _ProductObject : Trie.Trie<ProductId, ProductObject> = Trie.empty();
 
   // Create a product.
-  // when a new product is created the function will return an ProductID
+  // when a new product is created the function will return an Result that contains an #err or an #ok
   // The process is as follows: 
+  //    - first we validate that the field is not empty 
+  //    - if the field is empty the validation throw an error, else it will continue:
   //    - a let assigns the current state of _nextProduct, at startup this let is equivalent to 0. 
   //    - once the value is assigned, the _nextProduct variable has a value of 1 added to it to create an ID for the next product to be created.
-  //    - 
-  public func create(_product : ProductObject) : async ProductId {
-    let stockId = _nextProduct;
-    _nextProduct += 1;
-    _ProductObject := Trie.replace(
-      _ProductObject,
-      key(stockId),
-      Nat32.equal,
-      ?_product,
-    ).0;
-    return stockId;
+  public func create(_product : ProductObject) : async Result.Result<Text, Text> {
+    if (Text.equal(_product.title, "")) {
+      return #err("No se admiten campos vacios");
+    } else { 
+      let stockId = _nextProduct;
+      _nextProduct += 1;
+      _ProductObject := Trie.replace(
+        _ProductObject,
+        key(stockId),
+        Nat32.equal,
+        ?_product,
+      ).0;
+      return #ok("Registro guardado con el número " # Nat32.toText(stockId) # "!");
+    }
   };
 
   // Read a product.
@@ -47,7 +53,7 @@ actor Votes{
     return result;
   };
 
-   // Update a superhero.
+   // Update a product.
   public func update(stockId : ProductId, _product : ProductObject) : async Bool {
     let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
     let exists = Option.isSome(result);
