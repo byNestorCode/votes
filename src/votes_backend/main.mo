@@ -77,6 +77,8 @@ actor Votes{
     return { hash = x; key = x };
   };
 
+  // The most important fuction, the votes:
+  // within this function we can vote for our products by placing an existing stockId
   public func vote(stockId : ProductId) : async Bool {
     let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
     let exists = Option.isSome(result);
