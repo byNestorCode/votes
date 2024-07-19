@@ -54,6 +54,7 @@ actor Votes{
   };
 
    // Update a product.
+   // please @, do yourself a favor and finish documenting that jajaa xD
   public func update(stockId : ProductId, _product : ProductObject) : async Bool {
     let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
     let exists = Option.isSome(result);
@@ -68,9 +69,28 @@ actor Votes{
     return exists;
   };
 
+  // Deelete product
+  // ⚠️⚠️ pending and urgent
+
   // Create a trie key from a product identifier.
   private func key(x : ProductId) : Trie.Key<ProductId> {
     return { hash = x; key = x };
+  };
+
+  public func vote(stockId : ProductId) : async Bool {
+    let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
+    let exists = Option.isSome(result);
+    if (exists) {
+      let product = Option.get(result, { title = ""; votes = 0});
+      let updatedProduct = { product with votes = product.votes + 1; };
+      _ProductObject := Trie.replace(
+        _ProductObject,
+        key(stockId),
+        Nat32.equal,
+        ?updatedProduct,
+      ).0;
+    };
+    return exists;
   };
 
   /* // funcion para votos
