@@ -54,7 +54,7 @@ actor Votes{
   };
 
    // Update a product.
-   // please @, do yourself a favor and finish documenting that jajaa xD
+   // please @byNestorCode, do yourself a favor and finish documenting that jajaa xD
   public func update(stockId : ProductId, _product : ProductObject) : async Bool {
     let result = Trie.find(_ProductObject, key(stockId), Nat32.equal);
     let exists = Option.isSome(result);
